@@ -1,0 +1,20 @@
+{
+  "name": "xiaohong/web-demo",
+  "description": "study php web API",
+  "type": "project",
+  "require": {
+    "monolog/monolog": "^3.10"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "authors": [
+    {
+      "name": "elenh",
+      "email": "yisiwings@163.com"
+    }
+  ]
+}

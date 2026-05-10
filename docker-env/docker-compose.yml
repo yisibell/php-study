@@ -1,0 +1,42 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: ${CONTAINER_PREFIX}-nginx
+    ports:
+      - '${NGINX_HOST_PORT}:80'
+    volumes:
+      - ${PROJECT_PATH}:/var/www/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - php
+    networks:
+      - api-network
+
+  php:
+    image: php:${PHP_VERSION}-fpm
+    container_name: ${CONTAINER_PREFIX}-php
+    volumes:
+      - ${PROJECT_PATH}:/var/www/html
+    networks:
+      - api-network
+
+  mysql:
+    image: mysql:${MYSQL_VERSION}
+    container_name: ${CONTAINER_PREFIX}-mysql
+    ports:
+      - '${MYSQL_HOST_PORT}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - api-network
+
+networks:
+  api-network:
+
+volumes:
+  mysql-data:
