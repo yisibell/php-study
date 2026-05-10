@@ -8,6 +8,7 @@ This is a personal learning repository for PHP. A complete, independent, and por
 
 📁 Project Structure
 
+```plain text
 php-study/
 ├── docker-env/ # PHP 8.3 basic environment
 ├── docker-env2/ # PHP 8.4 latest practice environment
@@ -15,6 +16,7 @@ php-study/
 ├── php8-annotation-routes/ # Annotation routing demo project in php 8
 ├── .gitignore
 └── README.md
+```
 
 ---
 
