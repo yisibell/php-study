@@ -1,0 +1,6 @@
+# 系统垃圾
+.DS_Store
+Thumbs.db
+
+# PHP 依赖
+vendor/
