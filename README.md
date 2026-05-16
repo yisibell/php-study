@@ -1,5 +1,7 @@
 # php-study
 
+[中文版](README-CN.md)
+
 🐘 PHP-Study Learning Repository
 
 This is a personal learning repository for PHP. A complete, independent, and portable PHP development environment is built with Docker Compose. All configurations are native Docker without any integrated panels, which is suitable for systematically learning Linux, Docker and PHP backend fundamentals.
