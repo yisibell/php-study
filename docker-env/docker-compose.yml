@@ -20,6 +20,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: ${PHP_IMAGE_NAME}
+    container_name: ${CONTAINER_PREFIX}-php
     volumes:
       - ${PROJECT_PATH}:/var/www/html
       - ./php/php.ini:/usr/local/etc/php/conf.d/custom.ini
