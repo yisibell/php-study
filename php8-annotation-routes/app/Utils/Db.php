@@ -15,7 +15,7 @@ class Db
   {
     if (self::$pdo === null) {
       try {
-        $db = require __DIR__ . '/../config/db.php';
+        $db = require __DIR__ . '/../../config/db.php';
 
         self::$pdo = new \PDO(
           "mysql:host={$db['host']};port={$db['port']};dbname={$db['dbname']};charset={$db['charset']}",

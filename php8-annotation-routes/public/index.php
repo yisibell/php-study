@@ -1,7 +1,7 @@
 <?php
 
 // 加载 CORS 配置
-$cors = require __DIR__ . '/config/cors.php';
+$cors = require __DIR__ . '/../config/cors.php';
 
 // 预检请求直接退出，不处理 session
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -34,7 +34,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // 2. 定义控制器目录、命名空间根
 $ctrlNamespace = "App\\Controllers\\";
-$ctrlDir = __DIR__ . '/Controllers';
+$ctrlDir = __DIR__ . '/../app/Controllers';
 
 // 3. 路由容器 [path => [控制器,方法]]
 $routes = [];
