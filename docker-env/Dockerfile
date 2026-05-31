@@ -1,5 +1,5 @@
 # 基础镜像
-FROM php:8.4-fpm
+FROM php:8.3-fpm
 
 # 安装系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
