@@ -6,8 +6,10 @@ class Db
   private static ?\PDO $pdo = null;
 
   /**
-   * 单例模式获取PDO连接（配置来自 config/db.php）
-   * 
+   * 单例模式获取 PDO 连接（配置来自 config/db.php）
+   *
+   * @return \PDO
+   * @throws \PDOException 由 Response::error() 内部处理，不会向上抛出
    */
   public static function getInstance(): \PDO
   {
@@ -32,7 +34,11 @@ class Db
   }
 
   /**
-   * 查询多条
+   * 执行写操作（INSERT / UPDATE / DELETE 等）
+   *
+   * @param string $sql    SQL 语句
+   * @param array  $params 绑定参数
+   * @return int  受影响的行数
    */
   public static function exec(string $sql, array $params = []): int
   {
@@ -42,8 +48,11 @@ class Db
   }
 
   /**
-   * 查询多条
-   * 
+   * 查询单行记录
+   *
+   * @param string $sql    SQL 语句
+   * @param array  $params 绑定参数
+   * @return array|null 单行数据，无结果时返回 null
    */
   public static function fetch(string $sql, array $params = []): ?array
   {
@@ -53,8 +62,11 @@ class Db
   }
 
   /**
-   * 查询多条
-   * 
+   * 查询多行记录
+   *
+   * @param string $sql    SQL 语句
+   * @param array  $params 绑定参数
+   * @return array 结果集数组
    */
   public static function fetchAll(string $sql, array $params = []): array
   {
@@ -65,11 +77,12 @@ class Db
 
   /**
    * 通用分页查询
-   * @param string $sql 原始查询SQL（不带 LIMIT）
-   * @param array $params 绑定参数
-   * @param int $page 当前页码
-   * @param int $pageSize 每页条数
-   * @return array [list, total, page, pageSize, totalPage]
+   *
+   * @param string $sql      原始查询 SQL（不带 LIMIT）
+   * @param array  $params   绑定参数
+   * @param int    $page     当前页码，默认 1
+   * @param int    $pageSize 每页条数，默认 10
+   * @return array{list: array, total: int, page: int, pageSize: int, totalPage: int}
    */
   public static function page(string $sql, array $params = [], int $page = 1, int $pageSize = 10): array
   {
