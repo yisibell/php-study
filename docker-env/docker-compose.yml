@@ -1,6 +1,9 @@
+version: '3.8'
+
 services:
   nginx:
-    image: nginx:alpine
+    # 移除 alpine，使用官方完整版 Nginx
+    image: nginx
     container_name: ${CONTAINER_PREFIX}-nginx
     ports:
       - '${NGINX_HOST_PORT}:80'
@@ -13,10 +16,17 @@ services:
       - api-network
 
   php:
-    image: php:${PHP_VERSION}-fpm
-    container_name: ${CONTAINER_PREFIX}-php
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${PHP_IMAGE_NAME}
     volumes:
       - ${PROJECT_PATH}:/var/www/html
+      - ./php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+
+    depends_on:
+      - mysql
+      - redis
     networks:
       - api-network
 
@@ -35,8 +45,21 @@ services:
     networks:
       - api-network
 
+  # Redis 改用官方完整版，移除 alpine
+  redis:
+    image: redis
+    container_name: ${CONTAINER_PREFIX}-redis
+    ports:
+      - '${REDIS_HOST_PORT}:6379'
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - api-network
+
 networks:
   api-network:
 
 volumes:
   mysql-data:
+  redis-data:

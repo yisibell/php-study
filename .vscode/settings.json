@@ -1,0 +1,11 @@
+{
+  // 全局：保存时触发格式化
+  "editor.formatOnSave": false,
+
+  // PHP 文件专用：指定用 PHP Tools 格式化
+  "[php]": {
+    "editor.defaultFormatter": "DEVSENSE.phptools-vscode",
+    "editor.formatOnSave": true,
+    "github.copilot.nextEditSuggestions.enabled": true
+  }
+}
