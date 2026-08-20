@@ -16,7 +16,8 @@ services:
     image: ${PHP_IMAGE_NAME}
     volumes:
       - ${PROJECT_PATH}:/var/www/html
-      - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./php/php.ini:/usr/local/etc/php/conf.d/custom.ini # php 通用配置
+      - ./php/redis.ini:/usr/local/etc/php/conf.d/docker-php-ext-redis.custom.ini # redis 扩展配置
 
   mysql:
     image: mysql:${MYSQL_VERSION}

@@ -21,7 +21,7 @@ RUN docker-php-ext-install \
 # 安装Redis扩展
 RUN pecl install redis && docker-php-ext-enable redis
 
-# 拷贝自定义php.ini到容器
+# 拷贝自定义php.ini到容器（通过 volumes 的方式将本机的配置文件映射到容器更好）
 # COPY php.ini /usr/local/etc/php/conf.d/
 
 # 工作目录

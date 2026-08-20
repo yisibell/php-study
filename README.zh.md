@@ -1,6 +1,6 @@
 # php-study
 
-[English](README.md)
+[English](README.md) | [中文](./README.zh.md)
 
 🐘 PHP-Study 学习仓库
 

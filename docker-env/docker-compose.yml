@@ -24,6 +24,7 @@ services:
     volumes:
       - ${PROJECT_PATH}:/var/www/html
       - ./php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./php/redis.ini:/usr/local/etc/php/conf.d/docker-php-ext-redis.custom.ini # redis 扩展配置
 
     depends_on:
       - mysql
