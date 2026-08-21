@@ -1,61 +1,92 @@
-version: '3.8'
-
 services:
   nginx:
     # 移除 alpine，使用官方完整版 Nginx
-    image: nginx
-    container_name: ${CONTAINER_PREFIX}-nginx
+    image: nginx:latest
+    container_name: ${CONTAINER_PREFIX:-php-api}-nginx
     ports:
-      - '${NGINX_HOST_PORT}:80'
+      - '${NGINX_HOST_PORT:-8080}:80'
     volumes:
-      - ${PROJECT_PATH}:/var/www/html
+      - ${PROJECT_PATH:-../php8-annotation-routes}:/var/www/html
       - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
-      - php
+      php:
+        condition: service_healthy
     networks:
       - api-network
 
   php:
     build:
-      context: .
+      context: ./php
       dockerfile: Dockerfile
-    image: ${PHP_IMAGE_NAME}
-    container_name: ${CONTAINER_PREFIX}-php
+      args:
+        # PHP 版本由 .env 的 PHP_VERSION 控制
+        PHP_VERSION: ${PHP_VERSION:-8.3}
+    image: ${PHP_IMAGE_NAME:-php-api:8.3}
+    container_name: ${CONTAINER_PREFIX:-php-api}-php
     volumes:
-      - ${PROJECT_PATH}:/var/www/html
-      - ./php/php.ini:/usr/local/etc/php/conf.d/custom.ini
-      - ./php/redis.ini:/usr/local/etc/php/conf.d/docker-php-ext-redis.custom.ini # redis 扩展配置
-
+      - ${PROJECT_PATH:-../php8-annotation-routes}:/var/www/html
+      - ./php/conf.d/php.custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./php/conf.d/redis.custom.ini:/usr/local/etc/php/conf.d/docker-php-ext-redis.custom.ini # redis 扩展配置
+    # 等待 MySQL / Redis 就绪后再启动，避免连接被拒绝
     depends_on:
-      - mysql
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      # 探测 9000 端口上 php-fpm 是否可连
+      test: ['CMD-SHELL', 'php -r "exit(@fsockopen(''127.0.0.1'', 9000) ? 0 : 1);"']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - api-network
 
   mysql:
-    image: mysql:${MYSQL_VERSION}
-    container_name: ${CONTAINER_PREFIX}-mysql
+    image: mysql:${MYSQL_VERSION:-8.0}
+    container_name: ${CONTAINER_PREFIX:-php-api}-mysql
     ports:
-      - '${MYSQL_HOST_PORT}:3306'
+      - '${MYSQL_HOST_PORT:-3306}:3306'
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-api_db}
+      MYSQL_USER: ${MYSQL_USER:-api_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-api_pass}
     volumes:
       - mysql-data:/var/lib/mysql
+      # 挂载自定义配置文件
+      - ./mysql/conf.d/my.custom.cnf:/etc/mysql/conf.d/my.custom.cnf
+    healthcheck:
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     networks:
       - api-network
 
   # Redis 改用官方完整版，移除 alpine
   redis:
-    image: redis
-    container_name: ${CONTAINER_PREFIX}-redis
+    image: redis:latest
+    container_name: ${CONTAINER_PREFIX:-php-api}-redis
     ports:
-      - '${REDIS_HOST_PORT}:6379'
+      - '${REDIS_HOST_PORT:-6379}:6379'
+    environment:
+      # 供健康检查使用（不改变服务行为）
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_pass}
     volumes:
       - redis-data:/data
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+      # 挂载自定义配置文件
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    # AOF / 内存策略等见 redis.conf；密码仍由 .env 的 REDIS_PASSWORD 传入（命令行参数优先于配置文件）
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD:-redis_pass}
+    healthcheck:
+      test: ['CMD-SHELL', 'REDISCLI_AUTH=$$REDIS_PASSWORD redis-cli ping | grep -q PONG']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     networks:
       - api-network
 
