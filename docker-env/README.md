@@ -28,7 +28,7 @@ docker-env/
 ```bash
 cd docker-env
 
-# 1. 编辑 .env，把 PROJECT_PATH 指向你的项目源码目录（默认 ../php8-annotation-routes）
+# 1. 编辑 .env，把 PROJECT_PATH 指向你的项目源码目录（默认 ../apps/php8-annotation-routes）
 
 # 2. 构建 PHP 镜像（php 服务基于本地 Dockerfile）
 docker compose build php
@@ -54,7 +54,7 @@ docker compose up -d --pull=never
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `PROJECT_PATH` | `../php8-annotation-routes` | 宿主机项目源码目录，挂载到容器的 `/var/www/html` |
+| `PROJECT_PATH` | `../apps/php8-annotation-routes` | 宿主机项目源码目录，挂载到容器的 `/var/www/html` |
 | `NGINX_HOST_PORT` | `8080` | Nginx 宿主机端口 |
 | `MYSQL_HOST_PORT` | `3306` | MySQL 宿主机端口 |
 | `REDIS_HOST_PORT` | `6379` | Redis 宿主机端口 |

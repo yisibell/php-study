@@ -6,7 +6,7 @@ services:
     ports:
       - '${NGINX_HOST_PORT:-8080}:80'
     volumes:
-      - ${PROJECT_PATH:-../php8-annotation-routes}:/var/www/html
+      - ${PROJECT_PATH:-../apps/php8-annotation-routes}:/var/www/html
       - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       php:
@@ -24,7 +24,7 @@ services:
     image: ${PHP_IMAGE_NAME:-php-api:8.3}
     container_name: ${CONTAINER_PREFIX:-php-api}-php
     volumes:
-      - ${PROJECT_PATH:-../php8-annotation-routes}:/var/www/html
+      - ${PROJECT_PATH:-../apps/php8-annotation-routes}:/var/www/html
       - ./php/conf.d/php.custom.ini:/usr/local/etc/php/conf.d/custom.ini
       - ./php/conf.d/redis.custom.ini:/usr/local/etc/php/conf.d/docker-php-ext-redis.custom.ini # redis 扩展配置
     # 等待 MySQL / Redis 就绪后再启动，避免连接被拒绝

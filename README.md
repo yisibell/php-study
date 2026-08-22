@@ -1,119 +1,55 @@
-# php-study
+# hello-docker
 
-[English](README.md) | [中文](./README.zh.md)
+🐘 Docker + PHP 学习仓库 —— 基于 Docker Compose 搭建完整、可移植的 PHP 开发环境，零框架手写 PHP API，系统学习 Linux、Docker 与 PHP 后端基础。
 
-🐘 PHP-Study Learning Repository
+## 目录结构
 
-This is a personal learning repository for PHP. A complete, independent, and portable PHP development environment is built with Docker Compose. All configurations are native Docker without any integrated panels, which is suitable for systematically learning Linux, Docker and PHP backend fundamentals.
-
----
-
-📁 Project Structure
-
-```plain text
-php-study/
-├── docker-env/ # PHP 8.3 basic environment
-├── docker-env2/ # PHP 8.4 latest practice environment
-├── php7-annotation-routes/ # Annotation routing demo project in php 7
-├── php8-annotation-routes/ # Annotation routing demo project in php 8
-├── .gitignore
-└── README.md
+```
+hello-docker/
+├── docker-env/                  # Docker 开发环境（Nginx + PHP-FPM + MySQL + Redis）
+└── apps/
+    ├── php8-annotation-routes/  # PHP 8 Attribute 注解路由 API（当前主项目）
+    └── php7-annotation-routes/  # PHP 7 docblock 注解路由演示（演进前身）
 ```
 
----
+## 子项目文档
 
-🧱 Tech Stack (Docker Containers)
+| 子项目 | 说明 |
+|--------|------|
+| [docker-env](docker-env/README.md) | 环境编排、配置项、常用命令、注意事项 |
+| [php8-annotation-routes](apps/php8-annotation-routes/README.md) | PHP 8 注解路由 + MySQL + Redis 完整 API |
+| [php7-annotation-routes](apps/php7-annotation-routes/README.md) | PHP 7 docblock 注解路由演示 |
 
-- Nginx: Static resource hosting, request forwarding, reverse proxy
+## 快速开始
 
-- PHP-FPM: PHP runtime (supports PHP 8.3 / 8.4)
+`docker-env` 默认挂载 php8 项目，启动后访问 <http://localhost:8080>：
 
-- MySQL 8.0: Persistent data storage
+```bash
+cd docker-env
+docker compose build php            # 首次构建 PHP 镜像
+docker compose up -d --pull=never   # 启动全部服务（跳过网络拉取）
+```
 
-Installed PHP Extensions
+详细配置与常用命令见 [docker-env/README.md](docker-env/README.md)。
 
-pdo_mysql, mysqli, gd, zip, mbstring, redis
+## 技术栈
 
----
+| 组件 | 说明 |
+|------|------|
+| Nginx | 反向代理，请求转发至 PHP-FPM（`fastcgi_pass php:9000`） |
+| PHP-FPM | PHP 运行时（版本由 `.env` 控制，默认 8.3） |
+| MySQL 8.0 | 数据持久化（命名卷 + 自定义配置） |
+| Redis | 缓存 + Session 存储（AOF / RDB 双持久化） |
 
-🚀 Quick Start (Mac / Linux)
+已安装的 PHP 扩展：`pdo_mysql`、`mysqli`、`gd`、`zip`、`mbstring`、`redis`
 
-1. Start Environment (Avoid Docker Network Timeout)
+## 学习脉络
 
-Due to the unstable connection of Docker Hub, use local cached images for startup (recommended).
+- **应用演进**：`php7-annotation-routes`（docblock 正则注解）→ `php8-annotation-routes`（原生 Attribute 反射 + MySQL/Redis）
+- **环境演进**：早期三件套环境（已删除，git 历史可见）→ 现在 `docker-env` 四件套 + 健康检查启动顺序 + 配置外置
 
-docker compose up -d --pull=never
+## 注意事项
 
-2. Common Commands
-
-# Start containers in background
-
-docker compose up -d
-
-# Stop and remove containers
-
-docker compose down
-
-# Enter PHP container terminal
-
-docker compose exec php sh
-
-# Restart single service
-
-docker compose restart php
-
-# View real-time logs
-
-docker compose logs -f
-
----
-
-✨ Environment Features
-
-- Containerized Deployment: No local PHP, MySQL or Nginx installation required
-
-- Hot Mount: Code changes take effect in real time
-
-- Data Persistence: MySQL uses named volumes to prevent data loss
-
-- Strong Isolation: Multiple PHP versions run independently without conflict
-
-- Pure Configuration: Native Dockerfile for underlying learning
-
----
-
-📚 Learning Plan
-
-1. Docker basic commands, images, containers, mounts and networks
-
-2. Custom PHP images by handwriting Dockerfile
-
-3. Operating principle of Nginx + PHP-FPM
-
-4. PHP annotation routing, native MVC and API development
-
-5. MySQL basics, transactions and relational queries
-
----
-
-⚠️ Notes
-
-- This project is only for personal learning, not for production.
-
-- .env files, database passwords and vendor dependencies are ignored and will never be uploaded.
-
-- Developed on Intel macOS. Use --pull=never to skip network pulling when Docker network fails.
-
----
-
-🖥 Development Environment
-
-- Device: Intel macOS
-
-- Tools: Docker Desktop, Terminal
-
-- Proxy: Global VPN (Docker engine does not follow system proxy)
-
----
-
-Keep learning and keep improving ✨
+- 本项目仅用于个人学习，不可用于生产环境
+- `.env` 文件与数据库密码均已 gitignore，不会被上传
+- Docker Hub 网络不稳定时使用 `--pull=never` 走本地缓存镜像
